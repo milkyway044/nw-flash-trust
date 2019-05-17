@@ -39,7 +39,17 @@ module.exports.initSync = function (appName, customFolder) {
     
     function save() {
         var data = trusted.join(os.EOL);
-        fs.writeFileSync(cfgPath, data, { encoding: 'utf8' });
+        //it writes in utf8 without BOM
+        //fs.writeFileSync(cfgPath, data, { encoding: 'utf8' }); 
+        /*
+            https://www.adobe.com/content/dam/acom/en/devnet/flashplayer/articles/flash_player_admin_guide/pdf/flash_player_32_0_admin_guide.pdf
+            Page 40: Character encoding
+                the file may use either UTF-8 or UTF-16 Unicode encoding, 
+                either of which must be indicated by including 
+                a "byte order mark" (BOM) character 
+                at the beginning of the file;
+        */
+        fs.writeFileSync(cfgPath, '\ufeff'+data, { encoding: 'utf8' }); //with BOM
     }
     
     function add(path) {
